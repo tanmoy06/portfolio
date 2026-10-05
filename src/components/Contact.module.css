@@ -1,0 +1,29 @@
+.contactForm {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.contactForm input,
+.contactForm textarea {
+    width: 100%;
+    padding: 1rem;
+    background: var(--background-light);
+    border: 1px solid #374151;
+    border-radius: 8px;
+    color: var(--text-color);
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+}
+
+.contactForm input:focus,
+.contactForm textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.contactForm button {
+    align-self: flex-start;
+}

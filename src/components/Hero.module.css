@@ -1,0 +1,117 @@
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 80px;
+}
+
+.heroContent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+}
+
+.profileImage {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--background-light);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3),
+        0 0 0 5px var(--primary-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 5px var(--primary-color);
+    }
+
+    50% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    100% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 0 5px var(--primary-color);
+    }
+}
+
+.heroText {
+    max-width: 600px;
+    text-align: left;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+}
+
+.title {
+    font-size: 3.5rem;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.description {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+/* --- NEW: BUTTON STYLES --- */
+.buttonGroup {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    /* Allows buttons to stack on small screens */
+}
+
+.cvButton {
+    display: inline-block;
+    background: transparent;
+    color: var(--primary-color);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 2px solid var(--primary-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.cvButton:hover {
+    background-color: var(--primary-color);
+    color: #111827;
+}
+
+/* --- RESPONSIVE DESIGN for mobile --- */
+@media (max-width: 768px) {
+    .heroContent {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .heroText {
+        text-align: center;
+    }
+
+    .profileImage {
+        width: 200px;
+        height: 200px;
+    }
+
+    .title {
+        font-size: 2.8rem;
+    }
+
+    /* NEW: Center buttons on mobile */
+    .buttonGroup {
+        justify-content: center;
+    }
+}
