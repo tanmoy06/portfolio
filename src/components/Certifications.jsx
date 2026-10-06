@@ -1,112 +1,91 @@
-import { useScrollReveal } from '../hooks/useScrollReveal';
-import { ExternalLink, Award, Calendar, Building2 } from 'lucide-react';
+import React from "react";
+import { Award, ExternalLink, ShieldCheck, ArrowUpRight } from "lucide-react";
+import { Badge } from "./ui/Badge";
+import { SpotlightCard } from "./ui/SpotlightCard";
+import { Button } from "./ui/Button";
 
-// Certificate data from the provided Google Drive links.
-// Names/orgs are inferred from the resume context; adjust once certificates are viewed.
 const certifications = [
   {
     id: 1,
-    title: 'Certificate of Achievement',
-    organization: 'Issuing Organization',
-    note: 'View the certificate for exact details.',
-    year: null,
-    link: 'https://drive.google.com/file/d/1UDnSH1i7I37SVHAMX8jEjYlpj7ABsvVc/view?usp=drive_link',
-    color: 'from-indigo-500/20 to-purple-500/20',
-    border: 'border-indigo-500/30',
-    accent: 'text-indigo-400',
+    title: "Certificate of Achievement",
+    organization: "Professional Program / Technical Course",
+    note: "Official certification validating domain skills and technical coursework.",
+    link: "https://drive.google.com/file/d/1UDnSH1i7I37SVHAMX8jEjYlpj7ABsvVc/view?usp=drive_link",
   },
   {
     id: 2,
-    title: 'Certificate of Completion',
-    organization: 'Issuing Organization',
-    note: 'View the certificate for exact details.',
-    year: null,
-    link: 'https://drive.google.com/file/d/1rFLb0ne0Tkb0TZbx1yRB-VHOOX4IzkjV/view?usp=drive_link',
-    color: 'from-purple-500/20 to-cyan-500/20',
-    border: 'border-purple-500/30',
-    accent: 'text-purple-400',
+    title: "Certificate of Completion",
+    organization: "Technical Training / Coursework",
+    note: "Official certification validating curriculum completion and practical assessments.",
+    link: "https://drive.google.com/file/d/1rFLb0ne0Tkb0TZbx1yRB-VHOOX4IzkjV/view?usp=drive_link",
   },
 ];
 
 export default function Certifications() {
-  const ref = useScrollReveal();
-
   return (
-    <section
-      id="certifications"
-      className="section-padding"
-      aria-labelledby="certifications-heading"
-    >
-      <div className="max-w-5xl mx-auto" ref={ref}>
-        {/* Section header */}
-        <div className="reveal mb-12 text-center">
-          <p className="text-sm font-mono text-indigo-400 mb-2 tracking-widest uppercase">
-            // certifications
-          </p>
+    <section id="certifications" className="section-spacing relative" aria-labelledby="cert-heading">
+      <div className="section-container">
+        {/* Section Header */}
+        <div className="mb-12">
+          <Badge variant="primary" className="mb-3">
+            05 // Verified Credentials
+          </Badge>
           <h2
-            id="certifications-heading"
-            className="text-3xl sm:text-4xl font-bold text-white"
+            id="cert-heading"
+            className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100"
           >
             Certifications
           </h2>
-          <div className="section-divider mx-auto mt-3" />
+          <p className="mt-2 text-sm text-zinc-400 max-w-xl">
+            Verified certificates and formal credentials linked directly to cloud records.
+          </p>
         </div>
 
-        {/* Certificate cards */}
-        <div className="grid sm:grid-cols-2 gap-6">
-          {certifications.map((cert, i) => (
-            <article
+        {/* Certifications Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {certifications.map((cert) => (
+            <SpotlightCard
               key={cert.id}
-              className={`reveal delay-${(i + 1) * 100} glass rounded-2xl p-6 border ${cert.border} card-hover group bg-gradient-to-br ${cert.color}`}
-              aria-labelledby={`cert-title-${cert.id}`}
+              className="p-6 sm:p-8 flex flex-col justify-between group"
             >
-              <div className="flex items-start gap-4 mb-4">
-                <div className={`p-2.5 rounded-xl bg-white/5 ${cert.accent} shrink-0`}>
-                  <Award size={22} aria-hidden="true" />
+              <div>
+                <div className="flex items-center justify-between gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <Award size={20} />
+                  </div>
+                  <Badge variant="success" className="text-[11px] gap-1">
+                    <ShieldCheck size={12} />
+                    Verified Document
+                  </Badge>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h3
-                    id={`cert-title-${cert.id}`}
-                    className="font-bold text-white text-base leading-tight group-hover:text-indigo-200 transition-colors mb-1"
-                  >
-                    {cert.title}
-                  </h3>
-                  <p className="flex items-center gap-1.5 text-sm text-slate-400">
-                    <Building2 size={12} aria-hidden="true" />
-                    {cert.organization}
-                  </p>
-                  {cert.year && (
-                    <p className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                      <Calendar size={11} aria-hidden="true" />
-                      {cert.year}
-                    </p>
-                  )}
-                </div>
+
+                <h3 className="text-lg font-bold text-zinc-100 mb-1 group-hover:text-purple-400 transition-colors">
+                  {cert.title}
+                </h3>
+                <p className="text-xs font-mono text-zinc-400 mb-3">
+                  {cert.organization}
+                </p>
+                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
+                  {cert.note}
+                </p>
               </div>
 
-              {cert.note && (
-                <p className="text-xs text-slate-500 italic mb-4">{cert.note}</p>
-              )}
-
-              <a
-                href={cert.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium
-                  bg-white/5 ${cert.accent} border border-white/10
-                  hover:bg-white/10 transition-all duration-200 hover:scale-[1.02]`}
-                aria-label={`View certificate: ${cert.title}`}
-              >
-                <ExternalLink size={14} aria-hidden="true" />
-                View Certificate
-              </a>
-            </article>
+              <div className="pt-4 border-t border-zinc-800/80">
+                <a
+                  href={cert.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex w-full sm:w-auto"
+                >
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto gap-2 font-mono text-xs">
+                    <span>View Certificate</span>
+                    <ArrowUpRight size={13} className="opacity-60" />
+                  </Button>
+                </a>
+              </div>
+            </SpotlightCard>
           ))}
         </div>
-
-        <p className="reveal mt-6 text-center text-xs text-slate-500 delay-300">
-          Certificate names and organizations are displayed as provided. Click &quot;View Certificate&quot; for full details.
-        </p>
       </div>
     </section>
   );

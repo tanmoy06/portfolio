@@ -1,63 +1,71 @@
-import { useScrollReveal } from '../hooks/useScrollReveal';
-import { skillGroups } from '../data/skills';
+import React from "react";
+import { skillGroups } from "../data/skills";
+import { Badge } from "./ui/Badge";
+import { SpotlightCard } from "./ui/SpotlightCard";
+import { Layers } from "lucide-react";
 
 export default function Skills() {
-  const ref = useScrollReveal();
-
   return (
-    <section id="skills" className="section-padding" aria-labelledby="skills-heading">
-      <div className="max-w-6xl mx-auto" ref={ref}>
-        {/* Section header */}
-        <div className="reveal mb-12 text-center">
-          <p className="text-sm font-mono text-indigo-400 mb-2 tracking-widest uppercase">
-            // skills
-          </p>
+    <section id="skills" className="section-spacing relative" aria-labelledby="skills-heading">
+      <div className="section-container">
+        {/* Section Header */}
+        <div className="mb-12">
+          <Badge variant="primary" className="mb-3">
+            03 // Technical Stack
+          </Badge>
           <h2
             id="skills-heading"
-            className="text-3xl sm:text-4xl font-bold text-white"
+            className="text-3xl sm:text-4xl font-bold tracking-tight text-zinc-100"
           >
-            Technical Skills
+            Skills & Tooling
           </h2>
-          <div className="section-divider mx-auto mt-3" />
+          <p className="mt-2 text-sm text-zinc-400 max-w-xl">
+            Technologies and frameworks applied across real projects, backend APIs, and mobile systems.
+          </p>
         </div>
 
-        {/* Skills grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {skillGroups.map((group, gi) => (
-            <div
-              key={group.label}
-              className={`reveal delay-${Math.min((gi + 1) * 100, 500)} glass border border-slate-700/50 rounded-2xl p-6 card-hover group`}
-            >
-              {/* Group header */}
-              <div className="flex items-center gap-2 mb-5">
-                <span className="text-xl" aria-hidden="true">{group.icon}</span>
-                <h3 className="font-semibold text-white text-sm">{group.label}</h3>
-              </div>
-
-              {/* Skill list */}
-              <ul className="flex flex-wrap gap-2" aria-label={`${group.label} skills`}>
-                {group.skills.map((skill) => (
-                  <li key={skill.name}>
-                    <span
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium
-                        bg-slate-800/60 text-slate-300 border border-slate-700/60
-                        hover:bg-indigo-600/20 hover:border-indigo-500/40 hover:text-indigo-300
-                        transition-all duration-200 cursor-default"
-                    >
-                      <span aria-hidden="true">{skill.icon}</span>
-                      {skill.name}
+        {/* Skills Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {skillGroups.map((group) => (
+            <SpotlightCard key={group.label} className="p-6 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-zinc-800/80">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg" aria-hidden="true">
+                      {group.icon}
                     </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    <h3 className="font-semibold text-sm text-zinc-100">
+                      {group.label}
+                    </h3>
+                  </div>
+                  <span className="text-xs font-mono text-zinc-500">
+                    {group.skills.length} techs
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {group.skills.map((skill) => (
+                    <div
+                      key={skill.name}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono bg-zinc-800/60 text-zinc-300 border border-zinc-700/60 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:text-cyan-400 transition-all duration-150 cursor-default"
+                    >
+                      <span aria-hidden="true" className="text-xs">
+                        {skill.icon}
+                      </span>
+                      <span>{skill.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </SpotlightCard>
           ))}
         </div>
 
-        {/* Footer note */}
-        <p className="reveal mt-8 text-center text-xs text-slate-500 delay-500">
-          Skills are based on my resume and confirmed GitHub repositories.
-        </p>
+        <div className="mt-8 text-center">
+          <p className="text-xs font-mono text-zinc-500">
+            * All technologies listed are verified from actual repository codebases and academic transcripts.
+          </p>
+        </div>
       </div>
     </section>
   );

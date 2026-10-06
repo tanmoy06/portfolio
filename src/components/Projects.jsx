@@ -1,169 +1,150 @@
-import { useState } from "react";
-import { ExternalLink, Folder } from "lucide-react";
+import React, { useState } from "react";
+import { FolderGit2, ExternalLink, ArrowUpRight } from "lucide-react";
 import GitHubIcon from "./icons/GitHubIcon";
-import { useScrollReveal } from "../hooks/useScrollReveal";
 import { projects } from "../data/projects";
+import { Badge } from "./ui/Badge";
+import { Button } from "./ui/Button";
+import { SpotlightCard } from "./ui/SpotlightCard";
 
 const categories = ["All", "Mobile App", "Backend", "CS Fundamentals"];
 
-const categoryColors = {
-  "Mobile App": "bg-indigo-500/15 text-indigo-400 border-indigo-500/25",
-  Backend: "bg-purple-500/15 text-purple-400 border-purple-500/25",
-  "CS Fundamentals": "bg-cyan-500/15 text-cyan-400 border-cyan-500/25",
-};
-
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const ref = useScrollReveal();
 
-  const filtered =
+  const filteredProjects =
     activeCategory === "All"
       ? projects
       : projects.filter((p) => p.category === activeCategory);
 
   return (
-    <section
-      id="projects"
-      className="section-padding"
-      aria-labelledby="projects-heading"
-    >
-      <div className="max-w-7xl mx-auto" ref={ref}>
-        {/* Section header */}
-        <div className="reveal mb-8 text-center">
-          <p className="text-sm font-mono text-indigo-400 mb-2 tracking-widest uppercase">
-            // projects
-          </p>
-          <h2
-            id="projects-heading"
-            className="text-3xl sm:text-4xl font-bold text-white"
+    <section id="projects" className="section-spacing relative" aria-labelledby="projects-heading">
+      <div className="section-container">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <Badge variant="cyan" className="mb-3">
+              04 // Code & Repositories
+            </Badge>
+            <h2
+              id="projects-heading"
+              className="text-3xl sm:text-4xl font-bold tracking-tight text-white"
+            >
+              Featured Projects
+            </h2>
+            <p className="mt-2 text-sm text-zinc-400 max-w-xl">
+              Authentic software projects from my GitHub profile. No fabricated repositories or metrics.
+            </p>
+          </div>
+
+          {/* Minimalist Category Tabs */}
+          <div
+            className="flex flex-wrap items-center gap-1.5 p-1 rounded-xl bg-zinc-900/90 border border-white/10"
+            role="tablist"
+            aria-label="Filter projects by category"
           >
-            My Work
-          </h2>
-          <div className="section-divider mx-auto mt-3" />
-          <p className="mt-4 text-slate-400 text-sm max-w-xl mx-auto">
-            Real projects from{" "}
-            <a
-              href="https://github.com/tanmoy06"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2"
-            >
-              github.com/tanmoy06
-            </a>
-            . No fabricated descriptions.
-          </p>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                role="tab"
+                aria-selected={activeCategory === cat}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all duration-150 cursor-pointer select-none ${
+                  activeCategory === cat
+                    ? "bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-cyan-500/20 text-cyan-300 shadow-sm border border-cyan-500/40"
+                    : "text-zinc-400 hover:text-white"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Category filter */}
-        <div
-          className="reveal flex flex-wrap justify-center gap-2 mb-10"
-          role="group"
-          aria-label="Filter projects by category"
-        >
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 border ${
-                activeCategory === cat
-                  ? "bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-500/20"
-                  : "glass border-slate-700 text-slate-400 hover:text-white hover:border-slate-500"
-              }`}
-              aria-pressed={activeCategory === cat}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Projects grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((project, i) => (
-            <article
+        {/* Projects Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {filteredProjects.map((project) => (
+            <SpotlightCard
               key={project.id}
-              className="reveal glass border border-slate-700/50 rounded-2xl p-6 flex flex-col card-hover group"
-              style={{ transitionDelay: `${i * 80}ms` }}
-              aria-labelledby={`project-title-${project.id}`}
+              className="p-6 sm:p-7 flex flex-col justify-between group h-full"
             >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-3">
-                <div className="p-2 rounded-lg bg-indigo-500/10 text-indigo-400 group-hover:bg-indigo-500/20 transition-colors">
-                  <Folder size={18} aria-hidden="true" />
+              <div>
+                {/* Card Top Row */}
+                <div className="flex items-center justify-between gap-2 mb-4">
+                  <div className="w-9 h-9 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <FolderGit2 size={18} />
+                  </div>
+                  <Badge variant="outline" className="text-[11px]">
+                    {project.category}
+                  </Badge>
                 </div>
-                <span
-                  className={`px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                    categoryColors[project.category] ||
-                    "bg-slate-700 text-slate-300 border-slate-600"
-                  }`}
-                >
-                  {project.category}
-                </span>
+
+                {/* Project Title */}
+                <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors mb-2">
+                  {project.name}
+                </h3>
+
+                {/* Description */}
+                <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-6">
+                  {project.description}
+                </p>
               </div>
 
-              {/* Title */}
-              <h3
-                id={`project-title-${project.id}`}
-                className="text-base font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors"
-              >
-                {project.name}
-              </h3>
+              <div>
+                {/* Tech Badges */}
+                <div className="flex flex-wrap gap-1.5 mb-5" aria-label="Technologies used">
+                  {project.tech.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-white/[0.04] text-zinc-300 border border-white/10 hover:border-cyan-500/30 transition-colors"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
 
-              {/* Description */}
-              <p className="text-sm text-slate-400 leading-relaxed mb-4 flex-1">
-                {project.description}
-              </p>
-
-              {/* Tech stack */}
-              <div
-                className="flex flex-wrap gap-1.5 mb-5"
-                aria-label="Technologies used"
-              >
-                {project.tech.map((t) => (
-                  <span key={t} className="tech-badge">
-                    {t}
-                  </span>
-                ))}
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-3 mt-auto pt-4 border-t border-slate-700/50">
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-white transition-colors"
-                  aria-label={`View ${project.name} on GitHub`}
-                >
-                  <GitHubIcon size={14} />
-                  GitHub
-                </a>
-                {project.demo && (
+                {/* Card Action Link */}
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                   <a
-                    href={project.demo}
+                    href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
-                    aria-label={`View live demo of ${project.name}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-mono font-medium text-zinc-300 hover:text-cyan-300 transition-colors"
                   >
-                    <ExternalLink size={14} aria-hidden="true" />
-                    Live Demo
+                    <GitHubIcon size={14} />
+                    <span>View Repository</span>
+                    <ArrowUpRight size={12} className="opacity-60" />
                   </a>
-                )}
+
+                  {project.demo && (
+                    <a
+                      href={project.demo}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-xs font-mono text-cyan-400 hover:text-cyan-300"
+                    >
+                      <span>Live Demo</span>
+                      <ExternalLink size={12} />
+                    </a>
+                  )}
+                </div>
               </div>
-            </article>
+            </SpotlightCard>
           ))}
         </div>
 
-        {/* View all on GitHub */}
-        <div className="reveal mt-10 text-center delay-400">
+        {/* Global GitHub CTA Footer */}
+        <div className="mt-12 text-center">
           <a
             href="https://github.com/tanmoy06?tab=repositories"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl glass border border-slate-700 text-slate-300 font-medium text-sm hover:border-indigo-500/50 hover:text-indigo-400 transition-all duration-200 hover:scale-[1.02]"
+            className="inline-flex"
           >
-            <GitHubIcon size={16} />
-            View All Repositories on GitHub
+            <Button variant="outline" size="lg" className="gap-2 font-mono text-xs">
+              <GitHubIcon size={16} />
+              <span>Explore All Repositories on GitHub</span>
+              <ArrowUpRight size={13} className="opacity-60" />
+            </Button>
           </a>
         </div>
       </div>

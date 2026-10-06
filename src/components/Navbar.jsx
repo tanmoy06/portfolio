@@ -1,196 +1,254 @@
-import { useState, useEffect } from 'react';
-import { Menu, X, Sun, Moon, FileText } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Home,
+  User,
+  GraduationCap,
+  Code2,
+  FolderGit2,
+  Award,
+  Mail,
+  FileDown,
+  ArrowUpRight,
+  Menu,
+  X,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/Button";
 
-const navLinks = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Education', href: '#education' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Certifications', href: '#certifications' },
-  { label: 'Contact', href: '#contact' },
+const navItems = [
+  { label: "Home", icon: Home, href: "#home" },
+  { label: "About", icon: User, href: "#about" },
+  { label: "Education", icon: GraduationCap, href: "#education" },
+  { label: "Skills", icon: Code2, href: "#skills" },
+  { label: "Projects", icon: FolderGit2, href: "#projects" },
+  { label: "Certifications", icon: Award, href: "#certifications" },
+  { label: "Contact", icon: Mail, href: "#contact" },
 ];
 
 const RESUME_LINK =
-  'https://drive.google.com/file/d/1WRoq021AqnWl3o_eYW7B2meR5J9CxaCP/view?usp=drive_link';
+  "https://drive.google.com/file/d/1WRoq021AqnWl3o_eYW7B2meR5J9CxaCP/view?usp=drive_link";
 
-export default function Navbar({ darkMode, setDarkMode }) {
+const MOBILE_LABEL_WIDTH = 74;
+
+export default function Navbar() {
+  const [activeIndex, setActiveIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Track active section
   useEffect(() => {
-    const sections = navLinks.map((l) => l.href.slice(1));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
-    );
+    const handleScrollSync = () => {
+      const scrollPos = window.scrollY + 220;
+      navItems.forEach((item, idx) => {
+        const el = document.querySelector(item.href);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveIndex((prev) => (prev !== idx ? idx : prev));
+          }
+        }
+      });
+    };
 
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
+    window.addEventListener("scroll", handleScrollSync, { passive: true });
+    return () => window.removeEventListener("scroll", handleScrollSync);
   }, []);
 
-  const handleNav = (href) => {
+  const handleNavClick = (idx, href) => {
+    setActiveIndex(idx);
     setMenuOpen(false);
     const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? darkMode
-            ? 'bg-slate-900/95 backdrop-blur-md shadow-lg shadow-black/20 border-b border-slate-800'
-            : 'bg-white/95 backdrop-blur-md shadow-lg shadow-black/5 border-b border-slate-200'
-          : 'bg-transparent'
-      }`}
-    >
-      <nav
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 lg:h-18"
-        aria-label="Main navigation"
-      >
-        {/* Logo */}
+    <header className="fixed top-0 left-0 right-0 z-50 pt-3 px-3 sm:px-6">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
+        {/* Brand Logo */}
         <a
           href="#home"
-          onClick={(e) => { e.preventDefault(); handleNav('#home'); }}
-          className="flex items-center gap-2 group"
+          onClick={(e) => {
+            e.preventDefault();
+            handleNavClick(0, "#home");
+          }}
+          className={cn(
+            "flex items-center gap-2.5 px-3 py-2 rounded-full border transition-all duration-300 backdrop-blur-xl select-none group shrink-0",
+            scrolled
+              ? "bg-black/80 border-white/10 shadow-lg"
+              : "bg-black/50 border-white/[0.08]"
+          )}
           aria-label="Tanmoy Sarkar — Home"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-lg group-hover:scale-105 transition-transform duration-200">
+          <div className="w-7 h-7 rounded-full bg-white text-black flex items-center justify-center font-mono font-bold text-xs shadow-md group-hover:scale-105 transition-transform">
             TS
           </div>
-          <span className={`font-semibold text-base tracking-tight hidden sm:block ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+          <span className="font-semibold text-xs sm:text-sm tracking-tight text-zinc-100 group-hover:text-white transition-colors hidden sm:inline">
             Tanmoy Sarkar
           </span>
         </a>
 
-        {/* Desktop nav */}
-        <ul className="hidden lg:flex items-center gap-1" role="list">
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.href.slice(1);
-            return (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={(e) => { e.preventDefault(); handleNav(link.href); }}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                    isActive
-                      ? 'text-indigo-400 bg-indigo-500/10'
-                      : darkMode
-                      ? 'text-slate-300 hover:text-white hover:bg-white/5'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                  }`}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  {link.label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Right side actions */}
-        <div className="flex items-center gap-2">
-          {/* Theme toggle */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-            className={`p-2 rounded-lg transition-colors duration-200 ${
-              darkMode
-                ? 'text-slate-400 hover:text-yellow-400 hover:bg-white/5'
-                : 'text-slate-500 hover:text-indigo-600 hover:bg-slate-100'
-            }`}
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
-          {/* Resume button */}
-          <a
-            href={RESUME_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-all duration-200 shadow-md hover:shadow-indigo-500/25 hover:scale-[1.02]"
-          >
-            <FileText size={14} />
-            Resume
-          </a>
-
-          {/* Mobile hamburger */}
-          <button
-            className={`lg:hidden p-2 rounded-lg transition-colors duration-200 ${
-              darkMode
-                ? 'text-slate-300 hover:text-white hover:bg-white/5'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-            }`}
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile menu */}
-      <div
-        className={`lg:hidden transition-all duration-300 overflow-hidden ${
-          menuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-        aria-hidden={!menuOpen}
-      >
-        <div
-          className={`px-4 pb-4 pt-2 space-y-1 border-t ${
-            darkMode
-              ? 'bg-slate-900/98 border-slate-800'
-              : 'bg-white/98 border-slate-200'
-          }`}
+        {/* 21st.dev Style Expanding Floating Pill Navigation */}
+        <motion.nav
+          initial={{ y: -15, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 26 }}
+          role="navigation"
+          aria-label="Main Navigation"
+          className={cn(
+            "hidden md:flex items-center p-1 rounded-full border backdrop-blur-xl shadow-2xl space-x-1 transition-all duration-300",
+            scrolled
+              ? "bg-black/80 border-white/10"
+              : "bg-black/50 border-white/[0.08]"
+          )}
         >
-          {navLinks.map((link) => {
-            const isActive = activeSection === link.href.slice(1);
+          {navItems.map((item, idx) => {
+            const Icon = item.icon;
+            const isActive = activeIndex === idx;
+
             return (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => { e.preventDefault(); handleNav(link.href); }}
-                className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200 ${
+              <motion.button
+                key={item.label}
+                whileTap={{ scale: 0.96 }}
+                className={cn(
+                  "flex items-center gap-0 px-2.5 py-1.5 rounded-full transition-colors duration-200 relative h-9 cursor-pointer select-none",
                   isActive
-                    ? 'text-indigo-400 bg-indigo-500/10'
-                    : darkMode
-                    ? 'text-slate-300 hover:text-white hover:bg-white/5'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
-                }`}
+                    ? "bg-white/[0.12] text-white border border-white/20 gap-1.5 shadow-sm"
+                    : "bg-transparent text-zinc-400 hover:text-white hover:bg-white/5",
+                  "focus:outline-none focus-visible:ring-0"
+                )}
+                onClick={() => handleNavClick(idx, item.href)}
+                aria-label={item.label}
+                type="button"
               >
-                {link.label}
-              </a>
+                <Icon
+                  size={16}
+                  strokeWidth={isActive ? 2.2 : 1.8}
+                  aria-hidden="true"
+                  className={cn("transition-colors duration-200 shrink-0", isActive ? "text-white" : "")}
+                />
+
+                <motion.div
+                  initial={false}
+                  animate={{
+                    width: isActive ? `${MOBILE_LABEL_WIDTH}px` : "0px",
+                    opacity: isActive ? 1 : 0,
+                    marginLeft: isActive ? "5px" : "0px",
+                  }}
+                  transition={{
+                    width: { type: "spring", stiffness: 350, damping: 32 },
+                    opacity: { duration: 0.18 },
+                    marginLeft: { duration: 0.18 },
+                  }}
+                  className="overflow-hidden flex items-center max-w-[76px]"
+                >
+                  <span
+                    className={cn(
+                      "font-mono text-xs font-semibold whitespace-nowrap select-none transition-opacity duration-200 overflow-hidden text-ellipsis leading-none",
+                      isActive ? "text-white opacity-100" : "opacity-0"
+                    )}
+                    title={item.label}
+                  >
+                    {item.label}
+                  </span>
+                </motion.div>
+              </motion.button>
             );
           })}
+        </motion.nav>
+
+        {/* Right Actions */}
+        <div
+          className={cn(
+            "flex items-center gap-1.5 p-1 rounded-full border backdrop-blur-xl transition-all duration-300 shrink-0",
+            scrolled
+              ? "bg-black/80 border-white/10 shadow-lg"
+              : "bg-black/50 border-white/[0.08]"
+          )}
+        >
+          {/* Resume Download Action */}
           <a
             href={RESUME_LINK}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium mt-2"
+            className="hidden sm:inline-flex"
           >
-            <FileText size={14} />
-            Download Resume
+            <Button
+              variant="outline"
+              size="sm"
+              className="rounded-full h-8 px-3.5 gap-1.5 font-mono text-xs border-white/10 hover:border-white/25"
+            >
+              <FileDown size={13} className="text-zinc-300" />
+              <span>Resume</span>
+              <ArrowUpRight size={11} className="opacity-50" />
+            </Button>
           </a>
+
+          {/* Mobile Menu Trigger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
+            className="md:hidden p-2 rounded-full text-zinc-400 hover:text-white hover:bg-white/5 cursor-pointer"
+          >
+            {menuOpen ? <X size={16} /> : <Menu size={16} />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer Menu */}
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="md:hidden mt-2 p-3 rounded-2xl bg-black/95 border border-white/10 backdrop-blur-2xl shadow-2xl"
+        >
+          <ul className="space-y-1" role="list">
+            {navItems.map((item, idx) => {
+              const Icon = item.icon;
+              const isActive = activeIndex === idx;
+
+              return (
+                <li key={item.label}>
+                  <button
+                    onClick={() => handleNavClick(idx, item.href)}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono transition-colors text-left cursor-pointer",
+                      isActive
+                        ? "bg-white/[0.1] text-white font-semibold border border-white/15"
+                        : "text-zinc-400 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    <Icon size={16} className="shrink-0" />
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <a
+              href={RESUME_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold shadow-md transition-all"
+            >
+              <FileDown size={14} />
+              <span>Download Resume</span>
+              <ArrowUpRight size={12} />
+            </a>
+          </div>
+        </motion.div>
+      )}
     </header>
   );
 }
