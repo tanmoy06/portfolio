@@ -53,9 +53,9 @@ export default function About() {
                 <p>
                   I am <strong className="text-white font-semibold">Tanmoy Sarkar</strong>,
                   a Computer Science Engineer from West Bengal, India. After completing my{" "}
-                  <strong className="text-cyan-300">B.Tech in CSE</strong> from Maulana
+                  <strong className="text-cyan-300">B.Tech in CSE (2022–2026)</strong> from Maulana
                   Abul Kalam Azad University of Technology, I am currently pursuing an{" "}
-                  <strong className="text-indigo-300">M.Tech in CSE</strong> at Kalyani
+                  <strong className="text-indigo-300">M.Tech in CSE (2026–2028)</strong> at Kalyani
                   Government Engineering College.
                 </p>
                 <p>
@@ -149,7 +149,7 @@ export default function About() {
 
             <div className="flex items-center justify-between pt-3 border-t border-white/10 text-xs font-mono">
               <span className="text-zinc-500">Duration</span>
-              <span className="text-cyan-400 font-semibold">2024 – Present</span>
+              <span className="text-cyan-400 font-semibold">2026 – 2028</span>
             </div>
           </SpotlightCard>
 

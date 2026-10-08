@@ -8,7 +8,7 @@ const educationHistory = [
     degree: "M.Tech in Computer Science & Engineering",
     institution: "Kalyani Government Engineering College",
     location: "Kalyani, West Bengal",
-    period: "2024 – Present",
+    period: "2026 – 2028",
     status: "Currently Pursuing",
     statusType: "success",
     description:
@@ -19,7 +19,7 @@ const educationHistory = [
     degree: "B.Tech in Computer Science & Engineering",
     institution: "Maulana Abul Kalam Azad University of Technology",
     location: "West Bengal, India",
-    period: "2019 – 2023",
+    period: "2022 – 2026",
     status: "Completed",
     statusType: "default",
     description:

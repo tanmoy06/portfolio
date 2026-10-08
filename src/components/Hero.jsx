@@ -1,13 +1,12 @@
 import React from "react";
-import { ArrowDown, Download, Mail, ArrowUpRight, Sparkles, Terminal } from "lucide-react";
+import { ArrowDown, Download, Mail, ArrowUpRight, Sparkles } from "lucide-react";
 import GitHubIcon from "./icons/GitHubIcon";
 import LinkedInIcon from "./icons/LinkedInIcon";
 import { Button } from "./ui/Button";
 import { Badge } from "./ui/Badge";
-import LunarGravityCard from "./ui/lunar-gravity-card";
+import FeatureSection from "./ui/stack-feature-section";
 
-const RESUME_LINK =
-  "https://drive.google.com/file/d/1WRoq021AqnWl3o_eYW7B2meR5J9CxaCP/view?usp=drive_link";
+const RESUME_LINK = "/resume.pdf";
 
 export default function Hero() {
   const handleScrollTo = (id) => {
@@ -18,12 +17,12 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-[90vh] flex flex-col justify-center items-center pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 overflow-hidden"
+      className="relative min-h-[90vh] flex flex-col justify-center items-center pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16"
       aria-label="Hero section"
     >
       <div className="section-container w-full flex flex-col items-center relative z-10">
-        {/* Main 3D Lunar Gravity Hero Section */}
-        <LunarGravityCard
+        {/* Main Stack Feature Orbit Hero Section */}
+        <FeatureSection
           badge={
             <Badge variant="outline" className="gap-2 py-1 px-3.5 bg-white/[0.03] border-white/10 text-zinc-300">
               <span className="relative flex h-2 w-2">
@@ -44,7 +43,7 @@ export default function Hero() {
               </span>
             </>
           }
-          description="Computer Science Engineer building cross-platform mobile systems with Flutter, scalable backends with Firebase & MongoDB, and exploring AI/ML algorithms."
+          description="Computer Science Engineer building cross-platform mobile systems with Flutter, scalable cloud backends with Firebase & MongoDB, and exploring AI/ML algorithms."
         >
           {/* Interactive Action Buttons */}
           <div className="flex flex-wrap items-center gap-3 mt-2">
@@ -58,11 +57,14 @@ export default function Hero() {
               <ArrowDown size={14} />
             </Button>
 
-            <a href={RESUME_LINK} target="_blank" rel="noopener noreferrer">
+            <a
+              href={RESUME_LINK}
+              download="Tanmoy_Sarkar_Resume.pdf"
+              aria-label="Download Tanmoy Sarkar's Resume"
+            >
               <Button variant="secondary" size="default" className="gap-2 font-mono text-xs sm:text-sm">
                 <Download size={14} className="text-zinc-300" />
-                <span>Resume</span>
-                <ArrowUpRight size={12} className="opacity-50" />
+                <span>Download Resume</span>
               </Button>
             </a>
 
@@ -76,7 +78,7 @@ export default function Hero() {
               <span>Contact</span>
             </Button>
           </div>
-        </LunarGravityCard>
+        </FeatureSection>
 
         {/* Micro Metric & Status Strip — Seamlessly Blended */}
         <div className="w-full max-w-6xl mt-8 sm:mt-12 pt-6 border-t border-white/[0.08] flex flex-wrap items-center justify-between gap-4">

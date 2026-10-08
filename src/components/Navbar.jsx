@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
   User,
@@ -26,8 +26,7 @@ const navItems = [
   { label: "Contact", icon: Mail, href: "#contact" },
 ];
 
-const RESUME_LINK =
-  "https://drive.google.com/file/d/1WRoq021AqnWl3o_eYW7B2meR5J9CxaCP/view?usp=drive_link";
+const RESUME_LINK = "/resume.pdf";
 
 const MOBILE_LABEL_WIDTH = 74;
 
@@ -35,12 +34,45 @@ export default function Navbar() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const navRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Automatically close mobile menu on outside click, window scroll, or Escape key
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handlePointerDownOutside = (e) => {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+
+    const handleScrollClose = () => {
+      setMenuOpen(false);
+    };
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+      }
+    };
+
+    // Add listeners with passive / capture options
+    document.addEventListener("pointerdown", handlePointerDownOutside);
+    window.addEventListener("scroll", handleScrollClose, { passive: true });
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDownOutside);
+      window.removeEventListener("scroll", handleScrollClose);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menuOpen]);
 
   useEffect(() => {
     const handleScrollSync = () => {
@@ -71,7 +103,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 pt-3 px-3 sm:px-6">
+    <header ref={navRef} className="fixed top-0 left-0 right-0 z-50 pt-3 px-3 sm:px-6">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-2">
         {/* Brand Logo */}
         <a
@@ -177,9 +209,9 @@ export default function Navbar() {
           {/* Resume Download Action */}
           <a
             href={RESUME_LINK}
-            target="_blank"
-            rel="noopener noreferrer"
+            download="Tanmoy_Sarkar_Resume.pdf"
             className="hidden sm:inline-flex"
+            aria-label="Download Tanmoy Sarkar's Resume"
           >
             <Button
               variant="outline"
@@ -204,51 +236,53 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Drawer Menu */}
-      {menuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="md:hidden mt-2 p-3 rounded-2xl bg-black/95 border border-white/10 backdrop-blur-2xl shadow-2xl"
-        >
-          <ul className="space-y-1" role="list">
-            {navItems.map((item, idx) => {
-              const Icon = item.icon;
-              const isActive = activeIndex === idx;
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="md:hidden mt-2 p-3 rounded-2xl bg-black/95 border border-white/10 backdrop-blur-2xl shadow-2xl"
+          >
+            <ul className="space-y-1" role="list">
+              {navItems.map((item, idx) => {
+                const Icon = item.icon;
+                const isActive = activeIndex === idx;
 
-              return (
-                <li key={item.label}>
-                  <button
-                    onClick={() => handleNavClick(idx, item.href)}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono transition-colors text-left cursor-pointer",
-                      isActive
-                        ? "bg-white/[0.1] text-white font-semibold border border-white/15"
-                        : "text-zinc-400 hover:text-white hover:bg-white/5"
-                    )}
-                  >
-                    <Icon size={16} className="shrink-0" />
-                    <span>{item.label}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                return (
+                  <li key={item.label}>
+                    <button
+                      onClick={() => handleNavClick(idx, item.href)}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-mono transition-colors text-left cursor-pointer",
+                        isActive
+                          ? "bg-white/[0.1] text-white font-semibold border border-white/15"
+                          : "text-zinc-400 hover:text-white hover:bg-white/5"
+                      )}
+                    >
+                      <Icon size={16} className="shrink-0" />
+                      <span>{item.label}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
 
-          <div className="mt-3 pt-3 border-t border-white/10">
-            <a
-              href={RESUME_LINK}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold shadow-md transition-all"
-            >
-              <FileDown size={14} />
-              <span>Download Resume</span>
-              <ArrowUpRight size={12} />
-            </a>
-          </div>
-        </motion.div>
-      )}
+            <div className="mt-3 pt-3 border-t border-white/10">
+              <a
+                href={RESUME_LINK}
+                download="Tanmoy_Sarkar_Resume.pdf"
+                className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-white text-black hover:bg-zinc-200 font-mono text-xs font-semibold shadow-md transition-all"
+              >
+                <FileDown size={14} />
+                <span>Download Resume</span>
+                <ArrowUpRight size={12} />
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

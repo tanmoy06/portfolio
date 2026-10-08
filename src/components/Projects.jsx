@@ -32,7 +32,7 @@ export default function Projects() {
               Featured Projects
             </h2>
             <p className="mt-2 text-sm text-zinc-400 max-w-xl">
-              Authentic software projects from my GitHub profile. No fabricated repositories or metrics.
+              A collection of mobile applications, backend systems, and engineering projects.
             </p>
           </div>
 

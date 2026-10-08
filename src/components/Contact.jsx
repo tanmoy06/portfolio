@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
   Phone,
@@ -7,6 +8,7 @@ import {
   AlertCircle,
   MapPin,
   ArrowUpRight,
+  Sparkles,
 } from "lucide-react";
 import GitHubIcon from "./icons/GitHubIcon";
 import LinkedInIcon from "./icons/LinkedInIcon";
@@ -53,27 +55,44 @@ const contactChannels = [
   },
 ];
 
+// Premium spring-based horizontal shake animation keyframes
+const shakeAnimation = {
+  shake: {
+    x: [0, -10, 10, -7, 7, -4, 4, -1, 1, 0],
+    transition: {
+      duration: 0.5,
+      ease: "easeInOut",
+    },
+  },
+  idle: {
+    x: 0,
+  },
+};
+
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState(null); // 'sending' | 'success' | 'error'
   const [errors, setErrors] = useState({});
+  const [shakeTrigger, setShakeTrigger] = useState(0);
 
   const validate = () => {
     const errs = {};
     if (!formData.name.trim()) errs.name = "Please enter your name.";
     if (!formData.email.trim()) {
-      errs.email = "Please enter your email.";
+      errs.email = "Please enter your email address.";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errs.email = "Please enter a valid email address.";
+      errs.email = "Please enter a valid email address (e.g. name@domain.com).";
     }
-    if (!formData.message.trim()) errs.message = "Please write a message.";
+    if (!formData.message.trim()) errs.message = "Please write your message.";
     return errs;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleSubmit = (e) => {
@@ -81,15 +100,17 @@ export default function Contact() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setShakeTrigger((prev) => prev + 1);
       return;
     }
 
     setStatus("sending");
 
-    // NOTE: This is structured for easy plug-in with EmailJS or Formspree
+    // Simulated transmission (or EmailJS / Formspree hook)
     setTimeout(() => {
       setStatus("success");
       setFormData({ name: "", email: "", message: "" });
+      setErrors({});
     }, 900);
   };
 
@@ -165,31 +186,46 @@ export default function Contact() {
             ))}
           </div>
 
-          {/* Right Column: Interactive Contact Form */}
+          {/* Right Column: Interactive Contact Form with Shake Validation */}
           <div className="lg:col-span-7">
             <SpotlightCard className="p-6 sm:p-8 h-full flex flex-col justify-between">
               <div>
-                <h3 className="text-lg font-bold text-zinc-100 mb-2">
-                  Send a Direct Message
+                <h3 className="text-lg font-bold text-zinc-100 mb-2 flex items-center gap-2">
+                  <span>Send a Direct Message</span>
+                  <Sparkles size={16} className="text-cyan-400" />
                 </h3>
                 <p className="text-xs text-zinc-400 mb-6">
-                  Fill out this form and I will get back to you as soon as possible.
+                  Fill out this form and I will get back to you promptly.
                 </p>
 
-                {status === "success" && (
-                  <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-start gap-3">
-                    <CheckCircle2 size={18} className="shrink-0 mt-0.5" />
-                    <div className="text-xs">
-                      <p className="font-semibold">Message Received!</p>
-                      <p className="mt-0.5 text-zinc-400">
-                        Thank you for reaching out. I will respond to your email promptly.
-                      </p>
-                    </div>
-                  </div>
-                )}
+                {/* Success Message Banner */}
+                <AnimatePresence>
+                  {status === "success" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.96 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                      transition={{ duration: 0.3 }}
+                      className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-start gap-3 shadow-lg shadow-emerald-500/5"
+                    >
+                      <CheckCircle2 size={18} className="shrink-0 mt-0.5 text-emerald-400" />
+                      <div className="text-xs">
+                        <p className="font-semibold text-emerald-300">Message Received!</p>
+                        <p className="mt-0.5 text-zinc-400">
+                          Thank you for reaching out. I will respond to your email shortly.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-                  <div>
+                  {/* Name Input with Shake */}
+                  <motion.div
+                    key={`name-${shakeTrigger}`}
+                    variants={shakeAnimation}
+                    animate={errors.name ? "shake" : "idle"}
+                  >
                     <label
                       htmlFor="contact-name"
                       className="block text-xs font-mono text-zinc-300 mb-1.5"
@@ -203,21 +239,34 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       placeholder="e.g. Alex Johnson"
-                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border transition-all duration-200 focus:outline-none ${
                         errors.name
-                          ? "border-rose-500 focus:border-rose-500"
-                          : "border-zinc-800 focus:border-cyan-500"
-                      } text-zinc-100 placeholder:text-zinc-500 transition-colors focus:outline-none`}
+                          ? "border-rose-500/80 bg-rose-950/20 text-rose-100 shadow-[0_0_12px_rgba(244,63,94,0.18)] focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50"
+                          : "border-zinc-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 text-zinc-100 placeholder:text-zinc-500"
+                      }`}
                     />
-                    {errors.name && (
-                      <p className="text-[11px] font-mono text-rose-400 mt-1 flex items-center gap-1">
-                        <AlertCircle size={11} />
-                        {errors.name}
-                      </p>
-                    )}
-                  </div>
+                    <AnimatePresence>
+                      {errors.name && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: -4, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-[11px] font-mono text-rose-400 mt-1.5 flex items-center gap-1.5"
+                        >
+                          <AlertCircle size={12} className="shrink-0" />
+                          <span>{errors.name}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
 
-                  <div>
+                  {/* Email Input with Shake */}
+                  <motion.div
+                    key={`email-${shakeTrigger}`}
+                    variants={shakeAnimation}
+                    animate={errors.email ? "shake" : "idle"}
+                  >
                     <label
                       htmlFor="contact-email"
                       className="block text-xs font-mono text-zinc-300 mb-1.5"
@@ -231,21 +280,34 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       placeholder="e.g. alex@example.com"
-                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border transition-all duration-200 focus:outline-none ${
                         errors.email
-                          ? "border-rose-500 focus:border-rose-500"
-                          : "border-zinc-800 focus:border-cyan-500"
-                      } text-zinc-100 placeholder:text-zinc-500 transition-colors focus:outline-none`}
+                          ? "border-rose-500/80 bg-rose-950/20 text-rose-100 shadow-[0_0_12px_rgba(244,63,94,0.18)] focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50"
+                          : "border-zinc-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 text-zinc-100 placeholder:text-zinc-500"
+                      }`}
                     />
-                    {errors.email && (
-                      <p className="text-[11px] font-mono text-rose-400 mt-1 flex items-center gap-1">
-                        <AlertCircle size={11} />
-                        {errors.email}
-                      </p>
-                    )}
-                  </div>
+                    <AnimatePresence>
+                      {errors.email && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: -4, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-[11px] font-mono text-rose-400 mt-1.5 flex items-center gap-1.5"
+                        >
+                          <AlertCircle size={12} className="shrink-0" />
+                          <span>{errors.email}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
 
-                  <div>
+                  {/* Message Input with Shake */}
+                  <motion.div
+                    key={`message-${shakeTrigger}`}
+                    variants={shakeAnimation}
+                    animate={errors.message ? "shake" : "idle"}
+                  >
                     <label
                       htmlFor="contact-message"
                       className="block text-xs font-mono text-zinc-300 mb-1.5"
@@ -259,26 +321,34 @@ export default function Contact() {
                       value={formData.message}
                       onChange={handleChange}
                       placeholder="Hi Tanmoy, I would like to discuss..."
-                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl text-sm bg-zinc-900 border transition-all duration-200 focus:outline-none resize-none ${
                         errors.message
-                          ? "border-rose-500 focus:border-rose-500"
-                          : "border-zinc-800 focus:border-cyan-500"
-                      } text-zinc-100 placeholder:text-zinc-500 transition-colors focus:outline-none resize-none`}
+                          ? "border-rose-500/80 bg-rose-950/20 text-rose-100 shadow-[0_0_12px_rgba(244,63,94,0.18)] focus:border-rose-500 focus:ring-1 focus:ring-rose-500/50"
+                          : "border-zinc-800 focus:border-cyan-500/80 focus:ring-1 focus:ring-cyan-500/30 text-zinc-100 placeholder:text-zinc-500"
+                      }`}
                     />
-                    {errors.message && (
-                      <p className="text-[11px] font-mono text-rose-400 mt-1 flex items-center gap-1">
-                        <AlertCircle size={11} />
-                        {errors.message}
-                      </p>
-                    )}
-                  </div>
+                    <AnimatePresence>
+                      {errors.message && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -4, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: -4, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="text-[11px] font-mono text-rose-400 mt-1.5 flex items-center gap-1.5"
+                        >
+                          <AlertCircle size={12} className="shrink-0" />
+                          <span>{errors.message}</span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
 
                   <Button
                     type="submit"
                     variant="primary"
                     size="lg"
                     disabled={status === "sending"}
-                    className="w-full gap-2 font-mono text-xs sm:text-sm mt-2"
+                    className="w-full gap-2 font-mono text-xs sm:text-sm mt-2 transition-all duration-200 active:scale-[0.99]"
                   >
                     {status === "sending" ? (
                       <span>Sending Message...</span>
@@ -291,10 +361,6 @@ export default function Contact() {
                   </Button>
                 </form>
               </div>
-
-              <p className="mt-6 pt-4 border-t border-zinc-800/80 text-[11px] font-mono text-zinc-500 text-center">
-                * Built with client validation. Ready for EmailJS / Formspree webhook connection.
-              </p>
             </SpotlightCard>
           </div>
         </div>

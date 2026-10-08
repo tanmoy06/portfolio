@@ -60,9 +60,6 @@ export default function Footer() {
         {/* Bottom Micro Line */}
         <div className="mt-8 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-zinc-500">
           <p>© {new Date().getFullYear()} Tanmoy Sarkar. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            Built with React, Vite, Three.js & Tailwind CSS
-          </p>
         </div>
       </div>
     </footer>
